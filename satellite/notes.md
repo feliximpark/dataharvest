@@ -139,3 +139,5 @@ Geht so: Auf die Datensätze klicken, dann Level-2 Surface Temperature Band ausw
 ![alt text](image-1.png)
 
 
+Für die Kontrolle der Temperatur könnte man auch das hier nehmen: 
+Open-Meteo Historical Weather API — kostenfrei, kein API-Key nötig, einfacher REST-Endpunkt. Für zwei Tage und einen Standort eine Sache von 2 Minuten Code.

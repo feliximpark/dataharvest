@@ -44,27 +44,33 @@ Einmal benoetigte Python-Pakete:
 # ============================================================
 from pathlib import Path
 
+# Alle Pfade sind relativ zum Ordner, in dem dieses Skript liegt.
+# Dadurch ist es egal, aus welchem Arbeitsverzeichnis heraus du
+# das Skript startest (Projektroot, satellite/, etc.).
+SCRIPT_DIR = Path(__file__).resolve().parent
+
 # --- A) Satellitenbilder ----------------------------------------------------
 # Ordner mit den Landsat-TIFs. Das Skript verarbeitet ALLE Dateien, die hier
 # auf das Muster passen - leg also nur Bilder fuer dieselbe Stadt rein.
-LANDSAT_DIR     = Path(r"satellite/landsat-l2c2-brussels-2025")
+LANDSAT_DIR     = SCRIPT_DIR / "sat_img"
 LANDSAT_PATTERN = "*ST_B10.TIF"   # nur Surface-Temperature-Bilder
 
 # --- B) Stadtgrenzen / Bezirke ----------------------------------------------
-BOUNDARY_FILE   = Path(r"satellite/data/UrbISAdminUnits_04000.gpkg")
-BOUNDARY_LAYER  = "MonitoringDistricts"   # bei Shapefile: auf None setzen
-DISTRICT_FIELD  = "NAMEDUT"               # Spalte mit dem Bezirksnamen
+# Hannover-Stadtteile als GeoJSON (EPSG:25832 / UTM 32N).
+BOUNDARY_FILE   = SCRIPT_DIR / "geodata" / "hannover_stadtteile.geojson"
+BOUNDARY_LAYER  = None              # GeoJSON hat keine Layer
+DISTRICT_FIELD  = "STADTTLNAM"      # Spalte mit dem Stadtteilnamen
 
 # --- C) Bevoelkerungsdaten (optional) ---------------------------------------
 # Auf None setzen, falls du kein Bevoelkerungs-Join brauchst:
-POPULATION_FILE           = Path(r"satellite/data/OPENDATA_SECTOREN_2025_NEW.xlsx")
-POPULATION_CITY_FIELD     = "TX_DESCR_NL"            # Spalte mit Stadtname
-POPULATION_CITY_VALUE     = "Brussel"                # auf welche Stadt filtern
-POPULATION_DISTRICT_FIELD = "TX_DESCR_SECTOR_NL"     # Bezirks-Spalte (Join-Key)
-POPULATION_VALUE_FIELD    = "TOTAL"                  # Spalte mit der Einwohnerzahl
+POPULATION_FILE           = None
+POPULATION_CITY_FIELD     = None
+POPULATION_CITY_VALUE     = None
+POPULATION_DISTRICT_FIELD = None
+POPULATION_VALUE_FIELD    = None
 
 # --- Ergebnis ---------------------------------------------------------------
-OUTPUT_DIR      = Path(r"satellite/output")
+OUTPUT_DIR      = SCRIPT_DIR / "output"
 
 # --- Landsat-L2-Skalierung: DN -> Kelvin -> Celsius -------------------------
 # Quelle: https://www.usgs.gov/landsat-missions/landsat-collection-2-level-2-science-products
@@ -182,6 +188,10 @@ def main():
     print(f"Lade Bezirksgrenzen aus {BOUNDARY_FILE} ...")
     districts = gpd.read_file(BOUNDARY_FILE, layer=BOUNDARY_LAYER) \
                 if BOUNDARY_LAYER else gpd.read_file(BOUNDARY_FILE)
+    # Eintraege ohne Stadtteilnamen aussortieren (Hannover-Datensatz enthaelt
+    # ein paar Polygone ohne Name, z.B. Wasserflaechen) - sonst tauchen sie
+    # als "None"-Bezirk in der Auswertung auf.
+    districts = districts[districts[DISTRICT_FIELD].notna()].reset_index(drop=True)
     print(f"  -> {len(districts)} Bezirke, CRS: {districts.crs}")
 
     # --- Bilder finden ------------------------------------------------------
@@ -209,7 +219,9 @@ def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     geojson_path = OUTPUT_DIR / "districts_heat.geojson"
     csv_path     = OUTPUT_DIR / "districts_heat.csv"
-    districts.to_file(geojson_path, driver="GeoJSON")
+    # GeoJSON in WGS84 schreiben - so kann Datawrapper / Web direkt damit arbeiten.
+    # Die interne Berechnung bleibt im UTM-CRS, nur der Export wird umprojiziert.
+    districts.to_crs(4326).to_file(geojson_path, driver="GeoJSON")
     districts.drop(columns="geometry").to_csv(csv_path, index=False)
     print(f"Geschrieben: {geojson_path}")
     print(f"Geschrieben: {csv_path}")
