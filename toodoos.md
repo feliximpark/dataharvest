@@ -22,6 +22,10 @@ Hier gibt es einiges:
 - Wie organisiere ich meine Agenten?
 - Wie organisiere ich meine CC-Dateien (.md und die Skills etc.)
 - Wie organisiere ich die core-Speicher für das Team? 
+- Wie setze ich Skills ein?
+- Wie baue ich automatisierte Recherche-Pipelines wie im Workshop? 
+- wann nutze ich MCP-Server, wann APIs, wann skills? Normalerweise heute eher Skills. 
+
 
 ## Bürokratie und andere Themenanfragen
 ### Probleme:
@@ -34,3 +38,9 @@ Hier gibt es einiges:
 - Das Ding ist bei weitem noch nicht so gut, wie ich mir das vorstelle
 - ich bekomme immer wieder viele, viele Anforderungen, die ich umsetzen soll, dafür habe ich aber keine Zeit
 - 
+
+
+### Insgesamt
+Ich fühle mich gehetzt und genervt. Ich habe das Gefühl, meiner Arbeit nicht gerecht zu werden, weil soviel neues auf mich einprasselt, dass ich es kaum schaffen kann. Wäre ich nur für mich verantwortlich, wäre das schon alles okay, Augen zu und durch. Aber ich habe auch ein achtjähriges Kind, dem gegenüber ich wegen der Arbeit viel zu oft dünnhäutig und genervt bin, was ich danach jedes mal schrecklich bedaure. 
+Ich glaube, ein Problem ist es, dass es soviel neues gibt, tausende neue Möglichkeiten, die ich aller direkt einsetzen könnte. Aber ich schaffe es nicht, mir diese ganzen Techniken draufzuschaffen, schon gar nicht während ich im Job ja auch noch die Standard-Aufgaben erledigen muss und ja auch unbedingt für mein Kind da sein möchte, diese Zeit kommt ja nun wirklich nicht mehr zurück. was tun? 
+
